@@ -63,7 +63,7 @@ class API
             ->$method($address . '/' . $path, $data);
 
         if ($response->successful()) {
-            return $response->json()['data'] ?? null;
+            return $response->json('data');
         }
 
         return null;

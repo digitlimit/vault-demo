@@ -33,8 +33,26 @@ class Secret
         return $secrets['data'] ?? [];
     }
 
+    /**
+     * Return the path to the secret (.env file MYSECRET=:vault/secret/data/my_secret)
+     * @param  string  $key
+     * @param  string|null  $path
+     * @return string|null
+     */
+    public function valueContainsPathToSecret(string $key, string $path = null): ?string
+    {
+        $value = getenv($key);
+        if (str_starts_with($value, ':vault')) {
+            // then returns the value as the path to the secret
+            return str_ireplace(':vault', '', $value);
+        }
+
+        return $path;
+    }
+    
     public function read(string $key, string $path = null): ?string
     {
+        $path = $this->valueContainsPathToSecret($key, $path);
         $secrets = $this->all($path);
 
         if ($secrets[$key] ?? null) {
